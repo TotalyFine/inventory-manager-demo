@@ -1,6 +1,6 @@
 import streamlit as st
 
-# #streamlit run start.py
+# #streamlit run streamlit_app.py
 
 def app():
     st.set_page_config(
