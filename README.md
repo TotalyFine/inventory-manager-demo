@@ -1,2 +1,2 @@
 # Inventory Manager
-demo project so showcase possibilities
+demo project to showcase possibilities
