@@ -11,6 +11,7 @@ import pandas as pd
 st.set_page_config(
     page_title="Inventory tracker",
     page_icon=":shopping_bags:",  # This is an emoji shortcode. Could be a URL too.
+    
 )
 
 
