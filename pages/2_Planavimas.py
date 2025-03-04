@@ -18,21 +18,36 @@ def planavimas():
     
     # Display the editable table with st.data_editor
     st.subheader("Edit Production Data:")
-    edited_df = st.data_editor(df,num_rows="dynamic",use_container_width=True, column_config={
+    edited_df = st.data_editor(df,num_rows="dynamic", column_config={
         'Name': st.column_config.SelectboxColumn('Gaminys',options=product_name_list,required=True),
         'Production': st.column_config.NumberColumn('Gaminamas kiekis', min_value=1),
-        'Net_price': st.column_config.NumberColumn('Net_price', min_value=0.0,required=True,disabled=True),
+        'sell_price': st.column_config.NumberColumn('Pardavimo kaina', min_value=0.0,required=True,disabled=True),
+        'Net_price': st.column_config.NumberColumn('Savikaina', min_value=0.0,required=True,disabled=True),
         'Sub_price': st.column_config.NumberColumn('Sub_price', min_value=0.0,required=True,disabled=True),
         'Total_price': st.column_config.NumberColumn('Total_price', min_value=0.0,required=True,disabled=True)
     })
 
+    def fill_get_price(row):
+        print(row)
+        value = 5
+        #value = product_dataframe[product_dataframe["Produktas"] == item]["Savikaina"]
+        return value
+    
+    edited_df["sell_price"] = edited_df.apply(fill_get_price,axis=1)
 
+    for item in edited_df["Name"]:
+        print(item)
+        print(product_dataframe[product_dataframe["Produktas"] == item]["Savikaina"])
+
+
+    def get_test():
+        print("this is test")
 
     # Create four columns with equal width
     col1, col2, col3, col4 = st.columns(4,gap="small")
 
     with col1:
-        st.button(label="Paskačuoti savikaina",)
+        st.button(label="Paskačuoti savikaina",on_click=get_test)
 
     with col2:
         st.form("1")
