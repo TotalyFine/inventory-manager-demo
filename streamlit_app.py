@@ -14,19 +14,10 @@ Kairėje yra menu. Galima kiekvieną funkciją išskaidyti į atskirus puslapiu
 
 def app():
     st.set_page_config(layout="wide")
-    pages = {
-        "Meniu": [
-            st.Page("streamlit_app.py", title="Pagrindinis"),
-            st.Page("./sections/products.py", title="Gaminiai"),
-            st.Page("./sections/Demo.py", title="Demo lentelės")
-        ]
-    }
-    pg = st.navigation(pages)
-    pg.run()
-
     info()
 
 if __name__ == "__main__":
     app()
+
 
 

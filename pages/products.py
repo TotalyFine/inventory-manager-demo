@@ -86,5 +86,5 @@ def products():
 
     st.data_editor(dataframe, width=500)
 
-if __name__ == :
+if __name__ == "__main__":
     products()
