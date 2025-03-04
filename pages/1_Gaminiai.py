@@ -57,6 +57,15 @@ def products():
     raw_material_prices = get_material_prices() 
     ingridients = get_Ingridients()
 
+    ### SESSION STATE
+    if "get_products" not in st.session_state:
+        st.session_state["get_products"] = get_products()
+
+    if "product_list" not in st.session_state:
+        st.session_state["product_list"] = product_list
+
+
+
     # Calculate 
     product_list['Savikaina'] = product_list["Produktas"].apply(get_ingridieant_price)
 
