@@ -2,11 +2,10 @@ import streamlit as st
 import pandas as pd
 
 
-# Create an empty dataframe with the required columns
-columns = ['Name', 'Production', 'Net_price', 'Sub_price', 'Total_price']
 
-# Initialize an empty DataFrame
+columns = ['Name', 'Production', 'sell_price', 'Net_price', 'Sub_price', 'Total_price']
 df = pd.DataFrame(columns=columns)
+
 
 product_name_list = sorted(list(st.session_state.get("get_products", "Value not set")["Produktas"]))
 product_dataframe = st.session_state.get("product_list", "Value not set")
@@ -16,28 +15,27 @@ print(product_dataframe)
 def planavimas():
     st.title("Production Data Entry")
     
+
     # Display the editable table with st.data_editor
     st.subheader("Edit Production Data:")
-    edited_df = st.data_editor(df,num_rows="dynamic", column_config={
+    edited_df = st.data_editor(df,num_rows="dynamic",use_container_width=True, column_config={
         'Name': st.column_config.SelectboxColumn('Gaminys',options=product_name_list,required=True),
         'Production': st.column_config.NumberColumn('Gaminamas kiekis', min_value=1),
-        'sell_price': st.column_config.NumberColumn('Pardavimo kaina', min_value=0.0,required=True,disabled=True),
-        'Net_price': st.column_config.NumberColumn('Savikaina', min_value=0.0,required=True,disabled=True),
-        'Sub_price': st.column_config.NumberColumn('Sub_price', min_value=0.0,required=True,disabled=True),
-        'Total_price': st.column_config.NumberColumn('Total_price', min_value=0.0,required=True,disabled=True)
+        'sell_price': st.column_config.NumberColumn('Pardavimo kaina',required=True,disabled=True),
+        'Net_price': st.column_config.NumberColumn('Savikaina', required=True,disabled=True),
+        'Sub_price': st.column_config.NumberColumn('Sub_price', required=True,disabled=True),
+        'Total_price': st.column_config.NumberColumn('Total_price', required=True,disabled=True)
     })
 
+
     def fill_get_price(row):
-        print(row)
-        value = 5
-        #value = product_dataframe[product_dataframe["Produktas"] == item]["Savikaina"]
+        print(row[0])
+        value = product_dataframe[product_dataframe["Produktas"] == row[0]]["Savikaina"].values[0]
         return value
     
-    edited_df["sell_price"] = edited_df.apply(fill_get_price,axis=1)
 
-    for item in edited_df["Name"]:
-        print(item)
-        print(product_dataframe[product_dataframe["Produktas"] == item]["Savikaina"])
+    edited_df["sell_price"] = edited_df.apply(fill_get_price,axis=1)
+    print(type(edited_df))
 
 
     def get_test():
