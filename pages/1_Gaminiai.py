@@ -66,14 +66,15 @@ def products():
     st.text("Visi duomenys yra kas kart iš naujo importojami iš xlsx lentelių")
     st.subheader("Products", divider="orange") 
     st.data_editor(
-        product_list,
-        column_config={"Kaina":st.column_config.NumberColumn("Price 1kg",format=" %.2f €"),"Savikaina":st.column_config.NumberColumn("Savikaina 1kg",format=" %.2f €")}
+        product_list,hide_index=True,
+        column_config={"Kaina":st.column_config.NumberColumn("Kaina 1kg",format=" %.2f €"),"Savikaina":st.column_config.NumberColumn("Savikaina 1kg",format=" %.2f €")}
     )
 
 
     st.subheader("Žaliavų kainos (€ / 1kg)", divider="orange")
-    st.data_editor(raw_material_prices, width=500,
-        column_config={"price":st.column_config.NumberColumn("Price 1kg",format="%.2f €",)}
+    st.data_editor(raw_material_prices, width=500,hide_index=True,
+        column_config={"price":st.column_config.NumberColumn("Kaina 1kg",format="%.2f €"),
+                       "product":"Pavadinimas"}
     )
 
 
@@ -84,7 +85,7 @@ def products():
     dataframe.reset_index(inplace=True)
     dataframe.columns = ['Name', 'Value']
 
-    st.data_editor(dataframe, width=500)
+    st.table(dataframe)
 
 if __name__ == "__main__":
     products()

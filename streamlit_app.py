@@ -13,7 +13,7 @@ Kairėje yra menu. Galima kiekvieną funkciją išskaidyti į atskirus puslapiu
     
 
 def app():
-    st.set_page_config(layout="wide")
+    st.set_page_config(page_title="Pagrindinis",layout="wide", initial_sidebar_state="expanded")
     info()
 
 if __name__ == "__main__":
