@@ -57,6 +57,7 @@ def products():
     raw_material_prices = get_material_prices() 
     ingridients = get_Ingridients()
 
+
     ### SESSION STATE
     if "get_products" not in st.session_state:
         st.session_state["get_products"] = get_products()
