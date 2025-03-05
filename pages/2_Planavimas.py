@@ -37,10 +37,10 @@ def planavimas(): ############################ MAIN WINDOW #####################
     columns = ['Name', 'Production', 'sell_price', 'net_price', 'magrin']
     df = pd.DataFrame(columns=columns)
 
-    st.write("Galima įterpti neribotą kiekį elučių. Reikia pasirinkti gaminio pavadinimą kurį norima pagaminti ir įveti norima pagaminti kiekį kilogramais")
+    st.write("Galima įterpti neribotą kiekį eilučių. Pasirinkite gaminio pavadinimą ir įveskite gaminamą kiekį kilogramais.")
     edited_df = st.data_editor(df, num_rows="dynamic", key="data_editor",column_order=['Name', 'Production'],column_config={
         'Name': st.column_config.SelectboxColumn('Gaminys',options=product_name_list,required=True,width="large"),
-        'Production': st.column_config.NumberColumn('Gaminamas kiekis', min_value=1,width="medium")
+        'Production': st.column_config.NumberColumn('Gaminamas kiekis, kg', min_value=1,width="medium")
     })
     #Calculations
     if not edited_df.empty:
@@ -51,10 +51,10 @@ def planavimas(): ############################ MAIN WINDOW #####################
 
     st.subheader("Skaičiavimai",divider="orange")
     st.write("""#### Bedros sumos ir marža
-- Gaminamas kiekis: bendras gaminamas kiekis su 85% išeiga
-- Pardavimo suma: pardavimo kaina vieno kg * gaminamas kiekis
-- Bendra savikaina: 1kg savikaina * gaminamas kiekis * 5% (kitos išlaidos)
-- Marža: Pardavimo suma - Bendra savikaina
+- Gaminamas kiekis = bendras gaminamas kiekis su 85% išeiga
+- Pardavimo suma = 1kg gaminio pardavimo kaina * gaminamas kiekis
+- Bendra savikaina = 1kg gaminio savikaina * gaminamas kiekis + 5% (kitos sąnaudos nuo bendros sumos)
+- Marža = marža %
                 """)
     
     
@@ -85,8 +85,8 @@ def planavimas(): ############################ MAIN WINDOW #####################
     
     # Sum the total amounts needed for each ingredient
     total_ingredients = merged[ingredient_cols].sum().reset_index()
-    total_ingredients.columns = ['Ingridientas', 'Iš viso bus panaudota kg']
-
+    total_ingredients.columns = ['Ingridientas', 'kg']
+    st.write("Reikalingas bendras žaliavų kiekis kilogramais")
     total_ingredients
 
     # Button to add data to the Excel file

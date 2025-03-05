@@ -73,11 +73,13 @@ def products():
 
     # ------------ Display Content -----------------------------------------------------------------
     st.write("# Duomenų Bazė: Gaminiai ir jų sudėtys")
-    st.text("Visi duomenys yra kas kart iš naujo importojami iš xlsx lentelių")
-    st.subheader("Products", divider="orange") 
+    st.text("Visi duomenys yra automatiškai importojami atnaujinus puslapį iš xlsx lentelių")
+    st.subheader("Produktai", divider="orange") 
     st.data_editor(
         product_list,hide_index=True,
-        column_config={"Kaina":st.column_config.NumberColumn("Kaina 1kg",format=" %.2f €"),"Savikaina":st.column_config.NumberColumn("Savikaina 1kg",format=" %.2f €")}
+        column_config={"Kaina":st.column_config.NumberColumn("Pardavimo kaina 1kg",format=" %.2f €"),
+                       "Savikaina":st.column_config.NumberColumn("Savikaina 1kg",format=" %.2f €"),
+                       "Pakuotė":"Pakuotės svoris, kg"}
     )
 
 
@@ -89,13 +91,13 @@ def products():
 
 
     st.subheader("Gaminio receptūra (pagaminti 1kg produkto)", divider="orange") 
-    option = st.selectbox(label="Pasirinkt gaminį",options=list(ingridients["Produktas"]))
+    option = st.selectbox(label="Pasirinkite gaminį",options=list(ingridients["Produktas"]))
 
     dataframe = ingridients[ingridients["Produktas"] == option].dropna(axis=1).T
     dataframe.reset_index(inplace=True)
     dataframe.columns = ['Name', 'Value']
 
-    st.table(dataframe)
+    st.dataframe(dataframe,hide_index=True)
 
 if __name__ == "__main__":
     products()
