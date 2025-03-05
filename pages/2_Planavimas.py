@@ -2,60 +2,57 @@ import streamlit as st
 import pandas as pd
 
 
-
-columns = ['Name', 'Production', 'sell_price', 'Net_price', 'Sub_price', 'Total_price']
-df = pd.DataFrame(columns=columns)
-
-
 product_name_list = sorted(list(st.session_state.get("get_products", "Value not set")["Produktas"]))
 product_dataframe = st.session_state.get("product_list", "Value not set")
-print(product_dataframe)
+
+def fill_get_netprice(row):
+    print(row[0])
+    value = product_dataframe[product_dataframe["Produktas"] == row[0]]["Savikaina"].values[0]
+    return value
+
+def fill_get_price(row):
+    print(row[0])
+    value = product_dataframe[product_dataframe["Produktas"] == row[0]]["Kaina"].values[0]
+    return value
 
 
-def planavimas():
-    st.title("Production Data Entry")
+def planavimas(): ############################ MAIN WINDOW ###################################
+    st.title("Planavimas")
+
+    # Create an initial DataFrame with the columns
+    columns = ['Name', 'Production', 'sell_price', 'net_price', 'magrin']
+    df = pd.DataFrame(columns=columns)
+
+    st.write("Galima įterpti neribotą kiekį elučių. Reikia pasirinkti gaminio pavadinimą kurį norima pagaminti ir įveti norima pagaminti kiekį kilogramais")
+    edited_df = st.data_editor(df, num_rows="dynamic", key="data_editor",column_order=['Name', 'Production'],column_config={
+        'Name': st.column_config.SelectboxColumn('Gaminys',options=product_name_list,required=True,width="large"),
+        'Production': st.column_config.NumberColumn('Gaminamas kiekis', min_value=1,width="medium")
+    })
+    #Calculations
+    if not edited_df.empty:
+        edited_df["Production"] = edited_df["Production"] * 0.85
+        edited_df["sell_price"] = edited_df.apply(fill_get_price,axis=1) * edited_df['Production']
+        edited_df["net_price"] = 1.05 * edited_df['Production'] * edited_df.apply(fill_get_netprice,axis=1)
+        edited_df["magrin"] = (edited_df["sell_price"] -  edited_df["net_price"]) / edited_df["sell_price"]
+
+    st.subheader("Skaičiavimai",divider="orange")
+    st.write("""#### Bedros sumos ir marža
+- Gaminamas kiekis: bendras gaminamas kiekis su 85% išeiga
+- Pardavimo suma: pardavimo kaina vieno kg * gaminamas kiekis
+- Bendra savikaina: 1kg savikaina * gaminamas kiekis * 5% (kitos išlaidos)
+- Marža: Pardavimo suma - Bendra savikaina
+                """)
     
-
-    # Display the editable table with st.data_editor
-    st.subheader("Edit Production Data:")
-    edited_df = st.data_editor(df,num_rows="dynamic",use_container_width=True, column_config={
+    
+    st.dataframe(edited_df,use_container_width=True, hide_index=True, column_config={
         'Name': st.column_config.SelectboxColumn('Gaminys',options=product_name_list,required=True),
-        'Production': st.column_config.NumberColumn('Gaminamas kiekis', min_value=1),
-        'sell_price': st.column_config.NumberColumn('Pardavimo kaina',required=True,disabled=True),
-        'Net_price': st.column_config.NumberColumn('Savikaina', required=True,disabled=True),
-        'Sub_price': st.column_config.NumberColumn('Sub_price', required=True,disabled=True),
-        'Total_price': st.column_config.NumberColumn('Total_price', required=True,disabled=True)
+        'Production': st.column_config.NumberColumn('Pagaminto produkto kg', min_value=1),
+        'sell_price': st.column_config.NumberColumn('Pardavimo suma ',format=" %.2f €"),
+        'net_price': st.column_config.NumberColumn('Bendra savikaina',format=" %.2f €"),
+        'magrin': st.column_config.NumberColumn('Marža %',format="%.2f %%")
     })
 
-
-    def fill_get_price(row):
-        print(row[0])
-        value = product_dataframe[product_dataframe["Produktas"] == row[0]]["Savikaina"].values[0]
-        return value
     
-
-    edited_df["sell_price"] = edited_df.apply(fill_get_price,axis=1)
-    print(type(edited_df))
-
-
-    def get_test():
-        print("this is test")
-
-    # Create four columns with equal width
-    col1, col2, col3, col4 = st.columns(4,gap="small")
-
-    with col1:
-        st.button(label="Paskačuoti savikaina",on_click=get_test)
-
-    with col2:
-        st.form("1")
-
-    with col3:
-        st.form("2")
-
-    with col4:
-        st.form("3")
-
 
     # Button to add data to the Excel file
     if st.button("Add to production"):
