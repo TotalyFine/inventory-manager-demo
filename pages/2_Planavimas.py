@@ -46,7 +46,7 @@ def planavimas(): ############################ MAIN WINDOW #####################
     if not edited_df.empty:
         edited_df["Production"] = edited_df["Production"] * 0.85
         edited_df["sell_price"] = edited_df.apply(fill_get_price,axis=1) * edited_df['Production']
-        edited_df["net_price"] = 1.05 * edited_df['Production'] * edited_df.apply(fill_get_netprice,axis=1)
+        edited_df["net_price"] = edited_df['Production'] * edited_df.apply(fill_get_netprice,axis=1) * 1.05
         edited_df["magrin"] = (edited_df["sell_price"] -  edited_df["net_price"]) / edited_df["sell_price"]
 
     st.subheader("Skaičiavimai",divider="orange")
@@ -59,11 +59,11 @@ def planavimas(): ############################ MAIN WINDOW #####################
     
     
     st.dataframe(edited_df,use_container_width=True, hide_index=True, column_config={
-        'Name': st.column_config.SelectboxColumn('Gaminys',options=product_name_list,required=True),
-        'Production': st.column_config.NumberColumn('Pagaminto produkto kg', min_value=1),
-        'sell_price': st.column_config.NumberColumn('Pardavimo suma ',format=" %.2f €"),
-        'net_price': st.column_config.NumberColumn('Bendra savikaina',format=" %.2f €"),
-        'magrin': st.column_config.NumberColumn('Marža %',format="%.2f %%")
+        'Name': st.column_config.SelectboxColumn('Gaminys',options=product_name_list,required=True,width="large"),
+        'Production': st.column_config.NumberColumn('Pagaminto produkto kg', min_value=1,width="small"),
+        'sell_price': st.column_config.NumberColumn('Pardavimo suma ',format=" %.2f €",width="small"),
+        'net_price': st.column_config.NumberColumn('Bendra savikaina',format=" %.2f €",width="small"),
+        'magrin': st.column_config.NumberColumn('Marža %',format="%.2f %%",width="small")
     })
     
     ##########################################################
@@ -87,25 +87,46 @@ def planavimas(): ############################ MAIN WINDOW #####################
     total_ingredients = merged[ingredient_cols].sum().reset_index()
     total_ingredients.columns = ['Ingridientas', 'kg']
     st.write("Reikalingas bendras žaliavų kiekis kilogramais")
-    total_ingredients
+    st.dataframe(total_ingredients.sort_values(by="kg",ascending=False),hide_index=True, width=500)
 
+
+
+    #################### 
+    st.subheader("Perkelti į gamybą",divider="orange")
     # Button to add data to the Excel file
-    if st.button("Add to production"):
-        if not edited_df.empty:
-            try:
-                # Read the existing data from the Excel file
-                existing_data = pd.read_excel("production_data.xlsx")
-                # Append the new data
-                combined_data = pd.concat([existing_data, edited_df], ignore_index=True)
-            except FileNotFoundError:
-                # If the file doesn't exist, start with the current data
-                combined_data = edited_df
-            
-            # Save to the Excel file
-            combined_data.to_excel("production_data.xlsx", index=False)
-            st.success("Data saved to production_data.xlsx")
-        else:
-            st.error("No data to save.")
+
+
+    col1, col2 = st.columns(2,gap="small",vertical_alignment="bottom")
+    
+    with col1:
+        production_date = st.date_input("Gaminimo data",format="YYYY-MM-DD")
+
+    data_to_production = edited_df.drop(['sell_price', 'net_price', 'magrin'], axis=1)
+    data_to_production["Data"] = production_date
+    data_to_production["Pagaminta"] = False
+    data_to_production = data_to_production[["Data","Name","Production","Pagaminta"]]
+    data_to_production = data_to_production.rename(columns={"Name": "Pavadinimas","Production": "Gaminamas kiekis"})
+
+    with col2:
+        if st.button("Gaminti",):
+            if not data_to_production.empty:
+                try:
+                    # Read the existing data from the Excel file
+                    existing_data = pd.read_excel("./Files/production_data.xlsx")
+                    # Append the new data
+                    combined_data = pd.concat([existing_data, data_to_production], ignore_index=True)
+                except FileNotFoundError:
+                    # If the file doesn't exist, start with the current data
+                    combined_data = data_to_production
+                
+                # Save to the Excel file
+
+                combined_data.to_excel("./Files/production_data.xlsx", index=False)
+                st.success("Produktai perkelti į gamybą")
+            else:
+                st.error("Lentlė tusčia")
+    st.write("Kas bus perkeltą į gamybą:")
+    st.dataframe(data_to_production,hide_index=True)
 
 if __name__ == "__main__":
     planavimas()

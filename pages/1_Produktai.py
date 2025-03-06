@@ -95,7 +95,7 @@ def products():
 
     dataframe = ingridients[ingridients["Produktas"] == option].dropna(axis=1).T
     dataframe.reset_index(inplace=True)
-    dataframe.columns = ['Name', 'Value']
+    dataframe.columns = ['Pavadinimas', 'Kiekis']
 
     st.dataframe(dataframe,hide_index=True)
 
