@@ -24,7 +24,7 @@ def istorija():
     # Show editable table for the filtered data
     edited_filtered_df = st.data_editor(data=filtered_df, num_rows="dynamic",hide_index=True)
 
-    if st.button("Update"):
+    if st.button("Išsaugoti"):
         # Loop through edited rows and update the corresponding rows in the full dataframe
         for _, edited_row in edited_filtered_df.iterrows():
             orig_idx = edited_row["Eilutė"]

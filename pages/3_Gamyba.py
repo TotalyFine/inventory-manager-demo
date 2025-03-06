@@ -35,7 +35,7 @@ Uždėjus varnelę ant “Pagaminta” ir išsaugojus pakeitimus, po puslapio at
 
     with col1:
         list_of_products =df["Pavadinimas"].unique()
-        filter_product = st.selectbox("Filtruoti įrašus paga pavadinima", options=list_of_products,index=None)  
+        filter_product = st.selectbox("Filtruoti įrašus paga pavadinimą", options=list_of_products,index=None)  
         if filter_product != None:
             filtered_df = filtered_df[filtered_df["Pavadinimas"] == filter_product]
 

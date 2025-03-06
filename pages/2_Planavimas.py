@@ -125,7 +125,7 @@ def planavimas(): ############################ MAIN WINDOW #####################
                 st.success("Produktai perkelti į gamybą")
             else:
                 st.error("Lentlė tusčia")
-    st.write("Kas bus perkeltą į gamybą:")
+    st.write("Kas bus perkelta į gamybą:")
     st.dataframe(data_to_production,hide_index=True)
 
 if __name__ == "__main__":
